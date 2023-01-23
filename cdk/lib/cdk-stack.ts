@@ -1,4 +1,4 @@
-import { Stack, StackProps } from 'aws-cdk-lib';
+import { RemovalPolicy, Stack, StackProps } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import * as s3 from 'aws-cdk-lib/aws-s3';
 import * as iam from 'aws-cdk-lib/aws-iam';
@@ -24,6 +24,7 @@ export class CdkStack extends Stack {
       encryption: s3.BucketEncryption.S3_MANAGED,
       versioned: false,
       enforceSSL: true,
+      removalPolicy: RemovalPolicy.DESTROY,
     });
 
     // Create S3 results bucket
@@ -34,9 +35,10 @@ export class CdkStack extends Stack {
       encryption: s3.BucketEncryption.S3_MANAGED,
       versioned: false,
       enforceSSL: true,
+      removalPolicy: RemovalPolicy.DESTROY,
     });
 
-    // Add a file to the S3 "raw data" bucket
+    // Add files inside "sample_data" folder to the S3 "raw data" bucket
     const s3DeployFiles = new s3_deploy.BucketDeployment(this, `${id}-RawBucketDeployFile`, {
       sources: [s3_deploy.Source.asset("sample_data")],
       destinationBucket: rawBucket,
