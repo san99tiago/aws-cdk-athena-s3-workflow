@@ -11,11 +11,12 @@ export class CdkStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
 
-    const bucketName = 'san99tiago-s3-athena-tests';
-    const athenaWorkgroupName = 'san99tiago_athena';
-    const glueDatabaseName = 'san99tiago_database';
-    const glueTableName = 'san99tiago_sample_data_table';
-    const roleName = 'san99tiago_s3_athena_tests';
+    const mainResourcesName = 'athena_tests'
+    const bucketName = `${mainResourcesName.replace('_', '-')}-s3`;
+    const athenaWorkgroupName = `${mainResourcesName}_workgroup`;
+    const glueDatabaseName = `${mainResourcesName}_database`;
+    const glueTableName = `${mainResourcesName}_sample_data_table`;
+    const roleName = `${mainResourcesName}_role`;
 
     // Create S3 raw bucket
     const rawBucket = new s3.Bucket(this, `${id}-RawBucket`, {
@@ -54,7 +55,8 @@ export class CdkStack extends Stack {
         resultConfiguration: {
           outputLocation: `s3://${resultsBucket.bucketName}/`,
         },
-      }
+      },
+      recursiveDeleteOption: true,
     });
 
     // Create a Glue database
@@ -67,7 +69,7 @@ export class CdkStack extends Stack {
       }
     });
 
-    // Create a Glue table
+    // Create a Glue table based on the structure of the "sample_data"
     const glueTable = new glue.CfnTable(this, `${id}-GlueTable`, {
       catalogId: this.account,
       databaseName: glueDatabaseName,
@@ -76,7 +78,6 @@ export class CdkStack extends Stack {
         tableType: 'EXTERNAL_TABLE',
         storageDescriptor: {
           columns: [
-            { name: 'id', type: 'string', },
             { name: 'price', type: 'float', },
             { name: 'owner', type: 'string', },
             { name: 'title', type: 'string', },
@@ -95,12 +96,41 @@ export class CdkStack extends Stack {
             parameters: {
               'serialization.format': ',',
               'line.delim': '',
-              'field.delim': ','
-            }
-          }
+              'field.delim': ',',
+              'skip.header.line.count': '1',
+            },
+          },
         }
       }
     });
+
+    // Create sample athena queries for the uploaded S3 "sample_data"
+    const athenaQueryAll = new athena.CfnNamedQuery(this, `${id}-AthenaNamedQuery-All`, {
+      database: glueDatabaseName,
+      description: `Query to show all products from table ${glueTableName} for ${mainResourcesName} solution`,
+      name: `${mainResourcesName}_select_all`,
+      workGroup: athenaWorkgroupName,
+      queryString: `SELECT * FROM "${glueDatabaseName}"."${glueTableName}";`
+    });
+    athenaQueryAll.node.addDependency(workgroup);
+
+    const athenaQueryOnlyInStock = new athena.CfnNamedQuery(this, `${id}-AthenaNamedQuery-InStock`, {
+      database: glueDatabaseName,
+      description: `Query to show all products on stock from table ${glueTableName} for ${mainResourcesName} solution`,
+      name: `${mainResourcesName}_select_in_stock`,
+      workGroup: athenaWorkgroupName,
+      queryString: `SELECT * FROM "${glueDatabaseName}"."${glueTableName}" WHERE availability='In Stock';`
+    });
+    athenaQueryOnlyInStock.node.addDependency(workgroup);
+
+    const athenaQueryOrdeyCheapPrices = new athena.CfnNamedQuery(this, `${id}-AthenaNamedQuery-Cheap`, {
+      database: glueDatabaseName,
+      description: `Query to show products in cheap order from table ${glueTableName} for ${mainResourcesName} solution`,
+      name: `${mainResourcesName}_select_cheap_order`,
+      workGroup: athenaWorkgroupName,
+      queryString: `SELECT * FROM "${glueDatabaseName}"."${glueTableName}" ORDER BY "price";`
+    });
+    athenaQueryOrdeyCheapPrices.node.addDependency(workgroup);
 
     // Create a policy that grants full access to Athena and Glue
     const athenaPolicy = new iam.Policy(this, `${id}-AthenaGluePolicy`, {
