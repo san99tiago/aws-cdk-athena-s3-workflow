@@ -1,0 +1,15 @@
+price,owner,title,reviews,color,availability,datetime,views,url
+50.99,John Doe,Apple iPhone X,4.5,Gold,In Stock,2022-01-01 12:00:00,1000,https://www.example.com/iphone-x
+40.99,Jane Smith,Samsung Galaxy S10,4.2,Black,Out of Stock,2022-02-01 12:00:00,800,https://www.example.com/galaxy-s10
+60.99,Bob Johnson,Google Pixel 4,4.7,White,In Stock,2022-03-01 12:00:00,1200,https://www.example.com/pixel-4
+70.99,Emily Davis,LG V60 ThinQ,4.3,Blue,Out of Stock,2022-04-01 12:00:00,1000,https://www.example.com/v60-thinq
+80.99,Michael Brown,OnePlus 8 Pro,4.8,Green,In Stock,2022-05-01 12:00:00,1500,https://www.example.com/oneplus-8-pro
+90.99,George Garcia,Sony Xperia 1 II,4.4,Red,Out of Stock,2022-06-01 12:00:00,1000,https://www.example.com/xperia-1-ii
+100.99,Matthew Moore,Moto G Power,4.6,Yellow,In Stock,2022-07-01 12:00:00,1200,https://www.example.com/moto-g-power
+110.99,Jacob Taylor,Nokia 9 PureView,4.3,Purple,Out of Stock,2022-08-01 12:00:00,1000,https://www.example.com/nokia-9-pureview
+120.99,Nicholas Anderson,Razer Phone 2,4.7,Orange,In Stock,2022-09-01 12:00:00,1500,https://www.example.com/razer-phone-2
+130.99,Adriana Arango,Xiaomi Mi 10 Pro,4.8,Pink,Out of Stock,2022-10-01 12:00:00,1000,https://www.example.com/mi-10-pro
+140.99,David Gonzalez,Huawei P40 Pro,4.5,Silver,In Stock,2022-11-01 12:00:00,1200,https://www.example.com/p40-pro
+150.99,Richard Hall,Oppo Find X2 Pro,4.7,Gold,Out of Stock,2022-12-01 12:00:00,1000,https://www.example.com/find-x2-pro
+160.99,Charles Martin,Vivo X50 Pro+,4.8,Black,In Stock,2023-01-01 12:00:00,1500,https://www.example.com/x50-pro+
+170.99,Thomas Anderson,Realme X50 Pro,4.5,White,Out of Stock,2023-02-01 12:00:00,1000,https://www.example.com/realme-x
