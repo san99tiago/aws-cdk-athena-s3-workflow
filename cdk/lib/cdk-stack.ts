@@ -143,7 +143,7 @@ export class CdkStack extends Stack {
     });
 
     // Create IAM role that will grant access to Glue, Athena and the S3
-    const glueAthenaS3Role = new iam.Role(this, 'GlueS3Role', {
+    const glueAthenaS3Role = new iam.Role(this, `${id}-GlueS3Role`, {
       roleName: roleName,
       assumedBy: new iam.ServicePrincipal('glue.amazonaws.com'),
       description: 'Role for Glue-Athena based S3 workflows',
