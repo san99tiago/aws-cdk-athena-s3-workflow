@@ -11,10 +11,11 @@ export class CdkStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
 
-    const bucketName = "san99tiago-s3-athena-tests";
-    const athenaWorkgroupName = "san99tiago_athena";
-    const glueDatabaseName = "san99tiago_database";
-    const roleName = "san99tiago_s3_athena_tests";
+    const bucketName = 'san99tiago-s3-athena-tests';
+    const athenaWorkgroupName = 'san99tiago_athena';
+    const glueDatabaseName = 'san99tiago_database';
+    const glueTableName = 'san99tiago_sample_data_table';
+    const roleName = 'san99tiago_s3_athena_tests';
 
     // Create S3 raw bucket
     const rawBucket = new s3.Bucket(this, `${id}-RawBucket`, {
@@ -38,9 +39,9 @@ export class CdkStack extends Stack {
       removalPolicy: RemovalPolicy.DESTROY,
     });
 
-    // Add files inside "sample_data" folder to the S3 "raw data" bucket
+    // Add files inside 'sample_data' folder to the S3 'raw data' bucket
     const s3DeployFiles = new s3_deploy.BucketDeployment(this, `${id}-RawBucketDeployFile`, {
-      sources: [s3_deploy.Source.asset("sample_data")],
+      sources: [s3_deploy.Source.asset('sample_data')],
       destinationBucket: rawBucket,
     });
 
@@ -62,7 +63,42 @@ export class CdkStack extends Stack {
       databaseInput: {
         name: glueDatabaseName,
         locationUri: `s3://${resultsBucket.bucketName}/`,
-        description: "Glue database to be used in simple s3-athena workflows",
+        description: 'Glue database to be used in simple s3-athena workflows',
+      }
+    });
+
+    // Create a Glue table
+    const glueTable = new glue.CfnTable(this, `${id}-GlueTable`, {
+      catalogId: this.account,
+      databaseName: glueDatabaseName,
+      tableInput: {
+        name: glueTableName,
+        tableType: 'EXTERNAL_TABLE',
+        storageDescriptor: {
+          columns: [
+            { name: 'id', type: 'string', },
+            { name: 'price', type: 'float', },
+            { name: 'owner', type: 'string', },
+            { name: 'title', type: 'string', },
+            { name: 'reviews', type: 'float', },
+            { name: 'color', type: 'string', },
+            { name: 'availability', type: 'string', },
+            { name: 'datetime', type: 'string', },
+            { name: 'views', type: 'string', },
+            { name: 'url', type: 'string', },
+          ],
+          location: `s3://${rawBucket.bucketName}/`,
+          inputFormat: 'org.apache.hadoop.mapred.TextInputFormat',
+          outputFormat: 'org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat',
+          serdeInfo: {
+            serializationLibrary: 'org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe',
+            parameters: {
+              'serialization.format': ',',
+              'line.delim': '',
+              'field.delim': ','
+            }
+          }
+        }
       }
     });
 
@@ -77,12 +113,12 @@ export class CdkStack extends Stack {
     });
 
     // Create IAM role that will grant access to Glue, Athena and the S3
-    const glueAthenaS3Role = new iam.Role(this, "GlueS3Role", {
+    const glueAthenaS3Role = new iam.Role(this, 'GlueS3Role', {
       roleName: roleName,
-      assumedBy: new iam.ServicePrincipal("glue.amazonaws.com"),
+      assumedBy: new iam.ServicePrincipal('glue.amazonaws.com'),
       description: 'Role for Glue-Athena based S3 workflows',
       // managedPolicies: [
-      //   iam.ManagedPolicy.fromAwsManagedPolicyName("AmazonS3FullAccess")
+      //   iam.ManagedPolicy.fromAwsManagedPolicyName('AmazonS3FullAccess')
       // ],
     });
 
