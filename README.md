@@ -1,8 +1,8 @@
-# :dizzy: AWS CDK SIMPLE S3 ATHENA WORKFLOW :dizzy:
+# :dizzy: AWS CDK ATHENA S3 WORKFLOW :dizzy:
 
 <img src="assets/CDK_Simple_S3_Athena.png" width=90%> <br>
 
-This is a fun Athena-based project deployed on AWS with Infrastructure as Code with [AWS CDK (TypeScript)](https://aws.amazon.com/cdk/). The overall functionality of the project is to be able to deploy (and automatically configure) the AWS Glue and Athena services (Workgroup, Database, Table and Queries), so that some "Raw Data" (found at [`cdk/sample_data`](cdk/sample_data/)) that is stored in an Raw Data S3 bucket, can be queried with Athena-Named-Queries in an SQL-like approach, and the results are automatically stored in another "Results" bucket.
+This is a fun Athena-based project deployed on AWS with Infrastructure as Code on top of [AWS CDK (TypeScript)](https://aws.amazon.com/cdk/). The overall functionality of the project is to be able to deploy (and automatically configure) the AWS Glue and Athena services (Workgroup, Database, Table and Queries), so that some "Raw Data" (found at [`cdk/sample_data`](cdk/sample_data/)) that is stored in an Raw Data S3 bucket, can be queried with Athena-Named-Queries in an SQL-like approach, and the results are automatically stored in another "Results" bucket. It also deploys a sample role that can be used by the Glue service in Crawlers. <br>
 
 The information of this repository is based on many online resources, so feel free to use it as a guide for your future projects! <br>
 
