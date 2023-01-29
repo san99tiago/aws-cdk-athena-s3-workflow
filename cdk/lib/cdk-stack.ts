@@ -103,6 +103,7 @@ export class CdkStack extends Stack {
         }
       }
     });
+    glueTable.node.addDependency(glueDatabase)
 
     // Create sample athena queries for the uploaded S3 "sample_data"
     const athenaQueryAll = new athena.CfnNamedQuery(this, `${id}-AthenaNamedQuery-All`, {
